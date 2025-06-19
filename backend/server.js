@@ -64,7 +64,6 @@ app.post("/summarize", upload.array("pdf"), async (req, res) => {
     return res.status(204).send();
   }
   
-  // Create ZIP of filtered resumes
   const archive = archiver("zip");
   res.set({
     "Content-Type": "application/zip",
