@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResFilter Pro - AI-Powered Resume Screening</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    min-height: 100vh;
+    color: #e5e5e5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 3rem;
+    color: #f8f9fa;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    font-weight: 300;
+}
+
+.main-card {
+    background: #1a1a1a;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    border: 1px solid #2d2d2d;
+}
+
+.card-header {
+    background: #252525;
+    color: #f8f9fa;
+    padding: 2rem;
+    text-align: center;
+    border-bottom: 1px solid #2d2d2d;
+}
+
+.card-header h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.card-header p {
+    opacity: 0.9;
+    font-size: 1rem;
+}
+
+.card-body {
+    padding: 3rem;
+}
+
+.upload-section {
+    margin-bottom: 2.5rem;
+}
+
+.section-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #f1f3f4;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.file-upload-area {
+    border: 2px dashed #3a3a3a;
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: #212121;
+    position: relative;
+    overflow: hidden;
+}
+
+.file-upload-area:hover {
+    border-color: #5a5a5a;
+    background: #2a2a2a;
+}
+
+.file-upload-area.dragover {
+    border-color: #6a6a6a;
+    background: #2f2f2f;
+    transform: scale(1.02);
+}
+
+.upload-icon {
+    font-size: 3rem;
+    color: #4a9eff;
+    /* color: #8a8a8a; */
+    margin-bottom: 1rem;
+    transition: color 0.3s ease;
+}
+
+.file-upload-area:hover .upload-icon {
+    color: #3a8eef;
+}
+
+.upload-text {
+    font-size: 1.1rem;
+    color: #c5c5c5;
+    margin-bottom: 0.5rem;
+}
+
+.upload-subtext {
+    font-size: 0.9rem;
+    color: #9a9a9a;
+}
+
+.file-input {
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.selected-files {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #252525;
+    border-radius: 8px;
+    border-left: 4px solid #4a9eff;
+    display: none;
+    border: 1px solid #2d2d2d;
+    color: #e5e5e5;
+}
+
+.selected-files.show {
+    display: block;
+}
+
+.prompt-section {
+    margin-bottom: 2.5rem;
+}
+
+.prompt-input {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    border: 2px solid #3a3a3a;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    resize: none;
+    min-height: 120px;
+    font-family: inherit;
+    overflow: hidden;
+    background: #212121;
+    color: #e5e5e5;
+}
+
+.prompt-input:focus {
+    outline: none;
+    border-color: #4a9eff;
+    box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
+}
+
+.prompt-input::placeholder {
+    color: #8a8a8a;
+}
+
+.prompt-examples {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #252525;
+    border-radius: 8px;
+    border: 1px solid #2d2d2d;
+}
+
+.prompt-examples h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #e5e5e5;
+    margin-bottom: 0.5rem;
+}
+
+.example-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.example-tag {
+    background: #2a2a2a;
+    color: #d1d5db;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid #3a3a3a;
+}
+
+.example-tag:hover {
+    background: #4a9eff;
+    color: #ffffff;
+    transform: translateY(-1px);
+    border-color: #4a9eff;
+}
+
+.filter-button {
+    width: 100%;
+    background: #4a9eff;
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.filter-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(74, 158, 255, 0.3);
+    background: #3a8eef;
+}
+
+.filter-button:active {
+    transform: translateY(0);
+}
+
+.filter-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.filter-button .loading-spinner {
+    display: none;
+    margin-right: 0.5rem;
+}
+
+.filter-button.loading .loading-spinner {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.feature-card {
+    background: #1a1a1a;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    text-align: center;
+    transition: transform 0.3s ease;
+    border: 1px solid #2d2d2d;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #4a9eff;
+}
+
+.feature-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #f1f3f4;
+    margin-bottom: 0.5rem;
+}
+
+.feature-description {
+    color: #b5b5b5;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background: #2d2d2d;
+    border-radius: 2px;
+    overflow: hidden;
+    display: none;
+    margin-top: 1rem;
+}
+
+.progress-bar.show {
+    display: block;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #4a9eff;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    .card-body {
+        padding: 2rem;
+    }
+    
+    .features {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <!-- <h1><i class="fas fa-filter"></i> ResFilter <post style="color: #4a9eff;">Pro<post></h1> -->
+            <h1><i class="fas fa-brain"></i> ResFilter <span style="color: #4a9eff;">Pro<span></h1>
+            <p>AI-Powered Resume Screening & Filtering Platform</p>
+        </div>
+
+        <div class="main-card">
+            <div class="card-header">
+                <h2>Upload & Filter Resumes</h2>
+                <p>Upload a folder of resumes and define your filtering criteria to get matched candidates instantly</p>
+            </div>
+
+            <div class="card-body">
+                <div class="upload-section">
+                    <div class="section-title">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        Select Resume Folder
+                    </div>
+                    <div class="file-upload-area" id="uploadArea">
+                        <input type="file" class="file-input" id="folderInput"  webkitdirectory multiple accept="application/pdf">
+                        <div class="upload-icon">
+                            <i class="fas fa-folder-plus"></i>
+                        </div>
+                        <div class="upload-text">Click to select folder</div>
+                        <div class="upload-subtext">Upload a folder containing PDF resumes</div>
+                    </div>
+                    <div class="selected-files" id="selectedFiles">
+                        <i class="fas fa-check-circle" style="color: #4a9eff; margin-right: 0.5rem;"></i>
+                        <span id="fileCount">0 files selected</span>
+                    </div>
+                </div>
+
+                <div class="prompt-section">
+                    <div class="section-title">
+                        <i class="fas fa-search"></i>
+                        Filtering Criteria
+                    </div>
+                    <textarea 
+                        class="prompt-input" 
+                        id="promptInput" 
+                        placeholder="Enter your filtering criteria here...&#10;&#10;Example: Find candidates with 3+ years of experience in React, Node.js, and have worked with cloud technologies like AWS or Azure. Prefer candidates with startup experience."
+                    ></textarea>
+                    
+                    <div class="prompt-examples">
+                        <h4><i class="fas fa-lightbulb"></i> Quick Examples:</h4>
+                        <div class="example-tags">
+                            <span class="example-tag" onclick="setPrompt('Frontend developers with React and TypeScript experience')">Frontend + React</span>
+                            <span class="example-tag" onclick="setPrompt('Senior backend engineers with 5+ years Python and Django')">Senior Backend</span>
+                            <span class="example-tag" onclick="setPrompt('Data scientists with machine learning and Python experience')">Data Science</span>
+                            <span class="example-tag" onclick="setPrompt('Product managers with B2B SaaS and startup experience')">Product Manager</span>
+                            <span class="example-tag" onclick="setPrompt('DevOps engineers with AWS, Docker, and Kubernetes')">DevOps</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="filter-button" id="filterBtn" onclick="uploadFolder()">
+                    <i class="fas fa-spinner loading-spinner"></i>
+                    <i class="fas fa-filter" style="margin-right: 0.5rem;"></i>
+                    Start Filtering Process
+                </button>
+
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div class="feature-title">AI-Powered Matching</div>
+                <div class="feature-description">Advanced AI algorithms analyze resumes against your specific criteria for precise candidate matching</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-download"></i>
+                </div>
+                <div class="feature-title">Instant Download</div>
+                <div class="feature-description">Get filtered resumes delivered as a convenient ZIP file with only qualified candidates</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="feature-title">Secure & Private</div>
+                <div class="feature-description">Your resume data is processed securely and never stored on our servers</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const folderInput = document.getElementById('folderInput');
+        const selectedFiles = document.getElementById('selectedFiles');
+        const fileCount = document.getElementById('fileCount');
+        const filterBtn = document.getElementById('filterBtn');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+
+        // Auto-expand textarea functionality
+        const promptInput = document.getElementById('promptInput');
+        
+        function autoExpand(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.max(120, textarea.scrollHeight) + 'px';
+        }
+        
+        promptInput.addEventListener('input', function() {
+            autoExpand(this);
+        });
+        
+        promptInput.addEventListener('focus', function() {
+            autoExpand(this);
+        });
+
+        folderInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            const pdfFiles = files.filter( file => file.name.toLowerCase().endsWith(".pdf"))
+            if (pdfFiles.length > 0) {
+                selectedFiles.classList.add('show');
+                fileCount.textContent = `${pdfFiles.length} PDF file${pdfFiles.length !== 1 ? 's' : ''} selected`;
+            } else {
+                selectedFiles.classList.remove('show');
+            }
+        });
+
+        function setPrompt(text) {
+            const promptInput = document.getElementById('promptInput');
+            promptInput.value = text;
+            autoExpand(promptInput);
+            promptInput.focus();
+        }
+
+        async function uploadFolder(){
+            const files = document.getElementById('folderInput').files;
+            const prompt = document.getElementById('promptInput').value.trim();
+
+            if (!files.length || !prompt) {
+                alert("Please select a folder containing resumes and enter your filtering criteria");
+                return;
+            }
+
+            // Start loading state
+            filterBtn.disabled = true;
+            filterBtn.classList.add('loading');
+            progressBar.classList.add('show');
+            
+            // Simulate progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 90) progress = 90;
+                progressFill.style.width = progress + '%';
+            }, 200);
+
+            try {
+                const formData = new FormData();
+                
+                for (let file of files) {
+                    if(!file.name.toLowerCase().endsWith(".pdf")){continue;}
+                    formData.append("pdf", file);
+                }
+                
+                formData.append("prompt", prompt);
+
+                const res = await fetch('http://localhost:3000/summarize', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                clearInterval(progressInterval);
+                progressFill.style.width = '100%';
+
+                if (res.status === 204) {
+                    alert("No matching resumes found based on your criteria. Try adjusting your filtering requirements.");
+                    selectedFiles.classList.remove('show');
+                    return;
+                }
+
+                const blob = await res.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "filtered_resumes.zip";
+                a.click();
+                
+                // Success feedback
+                setTimeout(() => {
+                    alert("✅ Filtered resumes downloaded successfully!");
+                }, 100);
+            } catch (error) {
+                clearInterval(progressInterval);
+                console.error('Error:', error);
+                alert("An error occurred while processing resumes. Please try again.");
+            } finally {
+                // Reset loading state
+                filterBtn.disabled = false;
+                filterBtn.classList.remove('loading');
+                setTimeout(() => {
+                    progressBar.classList.remove('show');
+                    progressFill.style.width = '0%';
+                }, 1000);
+            }
+            selectedFiles.classList.remove('show');
+        }
+    </script>
+</body>
+</html>
