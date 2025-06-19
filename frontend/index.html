@@ -525,7 +525,8 @@ body {
                 
                 formData.append("prompt", prompt);
 
-                const res = await fetch('http://localhost:3000/summarize', {
+                // const res = await fetch('http://localhost:3000/summarize', {
+                const res = await fetch('https://server-nesw.onrender.com', {
                     method: 'POST',
                     body: formData
                 });
