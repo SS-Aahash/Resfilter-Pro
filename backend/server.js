@@ -13,8 +13,6 @@ dotenv.config()
 
 const port = 3000
 
-//defining the SERVER
-
 const app = express()
 app.use(cors())
 
@@ -80,8 +78,7 @@ app.post("/summarize", upload.array("pdf"), async (req, res) => {
   }
   archive.finalize();
 
-
-  // Optional: delete files after zipping (or use a cron job)
+    
   archive.on("end", () => {
     for (let f of files) fs.unlink(f.path, () => {});
   })
