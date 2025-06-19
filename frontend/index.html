@@ -462,7 +462,6 @@ body {
         const progressBar = document.getElementById('progressBar');
         const progressFill = document.getElementById('progressFill');
 
-        // Auto-expand textarea functionality
         const promptInput = document.getElementById('promptInput');
         
         function autoExpand(textarea) {
@@ -504,13 +503,11 @@ body {
                 alert("Please select a folder containing resumes and enter your filtering criteria");
                 return;
             }
-
-            // Start loading state
+            
             filterBtn.disabled = true;
             filterBtn.classList.add('loading');
             progressBar.classList.add('show');
             
-            // Simulate progress
             let progress = 0;
             const progressInterval = setInterval(() => {
                 progress += Math.random() * 15;
@@ -548,8 +545,7 @@ body {
                 a.href = url;
                 a.download = "filtered_resumes.zip";
                 a.click();
-                
-                // Success feedback
+
                 setTimeout(() => {
                     alert("✅ Filtered resumes downloaded successfully!");
                 }, 100);
@@ -558,7 +554,6 @@ body {
                 console.error('Error:', error);
                 alert("An error occurred while processing resumes. Please try again.");
             } finally {
-                // Reset loading state
                 filterBtn.disabled = false;
                 filterBtn.classList.remove('loading');
                 setTimeout(() => {
